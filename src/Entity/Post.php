@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
+    const TYPES = [
+        'Debate' => 'debate',
+        'Opinion' => 'opinion',
+        'Humor' => 'humor'
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -31,9 +38,6 @@ class Post
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $url = null;
-
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -41,8 +45,31 @@ class Post
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Interaction::class, orphanRemoval: true)]
     private Collection $interactions;
 
-    public function __construct()
-    {
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $slug = null;
+
+    /**
+     * Objeto constructor
+     *
+     * @param string|null $title
+     * @param string|null $description
+     * @param string|null $type
+     * @param string|null $slug
+     * @param mixed $file
+     */
+    public function __construct(
+        string $title = null,
+        string $description = null,
+        string $type = null,
+        string $slug = null,
+        mixed $file = null,
+    ) {
+        $this->title = $title;
+        $this->description = $description;
+        $this->type = $type;
+        $this->file = $file;
+        $this->creation_date = new DateTime();
+        $this->slug = $slug;
         $this->interactions = new ArrayCollection();
     }
 
@@ -111,18 +138,6 @@ class Post
         return $this;
     }
 
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function setUrl(string $url): self
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -161,6 +176,18 @@ class Post
                 $interaction->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

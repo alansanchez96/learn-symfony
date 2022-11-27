@@ -21,7 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private array $roles = [];
 
     /**
@@ -42,8 +42,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Interaction::class, orphanRemoval: true)]
     private Collection $interactions;
 
-    public function __construct()
-    {
+    public function __construct(
+        int $id = null,
+        string $email = null,
+        string $password = null,
+        string $photo = null,
+        string $description = null
+    ) {
+        $this->id = $id;
+        $this->email = $email;
+        $this->password = $password;
+        $this->photo = $photo;
+        $this->description = $description;
         $this->posts = new ArrayCollection();
         $this->interactions = new ArrayCollection();
     }

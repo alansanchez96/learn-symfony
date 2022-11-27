@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PostController SHOW!
+{% block title %}Hello UserController!
 {% endblock %}
 
 {% block body %}
@@ -18,12 +18,6 @@
 	</style>
 
 	<div class="example-wrapper">
-		<pre>
-            {{ dump(post) }}
-        </pre>
-
-		<pre>
-			{{ dump(post2) }}
-		</pre>
-	</div>
-{% endblock %}
+		{{form(formRegister)}}
+		</div>
+	{% endblock %}

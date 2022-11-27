@@ -39,28 +39,66 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Post[] Returns an array of Post objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Post[] Returns an array of Post objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Post
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Post
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
+
+    /**
+     * El metodo devuelve un array con los valores que ingreses en SELECT
+     *
+     * @param int $id
+     * @return array
+     */
+    public function findPost($id): array
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT post.id, post.slug
+                FROM App:Post post
+                WHERE post.id =:id
+            ')
+            ->setParameter('id', $id)
+            ->getSingleResult(); // or getResult
+    }
+
+    public function findAllPosts()
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT 
+                    post.id, 
+                    post.title,
+                    post.description,
+                    post.file,
+                    post.creation_date,
+                    post.slug,
+                    user.id AS user_id,
+                    user.email AS user_email
+                FROM App:Post post
+                JOIN post.user user
+                ORDER BY post.id DESC
+            ')
+            ->getResult();
+    }
 }
